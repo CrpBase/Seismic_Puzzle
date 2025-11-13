@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-  <title>PoKi Puzzle</title>
+  <title>Seismic Puzzle</title>
   <style>
     :root{
       --cream:#F4EFE9;--paper:#FAF7F2;--ink:#141414;--muted:#6f6f6f;
@@ -192,7 +192,7 @@ html, body { height: 100%; overflow: hidden !important; }
       <div class="overlay" id="menuOverlay" style="display:flex">
         <canvas id="menuBG"></canvas>
         <div class="menu">
-          <h1 style="margin:0 0 12px 0">PoKi Puzzle</h1>
+          <h1 style="margin:0 0 12px 0">Seismic Puzzle</h1>
           <div class="v">
             <button class="btn primary" id="startBtn" disabled>Start</button>
 
@@ -475,10 +475,10 @@ function generateShare(){
     const name=(getName()||"guest");
 
     ctx.fillStyle="#0b0f14"; // subtle shadow effect for legibility
-    ctx.font="700 28px Inter, Arial"; ctx.fillText("PoKi Puzzle", rX+1, pad+31);
-    ctx.fillStyle="#e8f0f7"; ctx.fillText("PoKi Puzzle", rX, pad+30);
+    ctx.font="700 28px Inter, Arial"; ctx.fillText("Seismic Puzzle", rX+1, pad+31);
+    ctx.fillStyle="#e8f0f7"; ctx.fillText("Seismic Puzzle", rX, pad+30);
 
-    ctx.fillStyle="#e8f0f7"; ctx.font="800 18px Inter, Arial"; ctx.fillText("for @GoKiteAI", rX, pad+58);
+    ctx.fillStyle="#e8f0f7"; ctx.font="800 18px Inter, Arial"; ctx.fillText("for @SeismicSys", rX, pad+58);
 
     ctx.fillStyle="#9fb2c3"; ctx.font="600 14px Inter, Arial"; ctx.fillText("Player", rX, pad+118);
     ctx.fillStyle="#e8f0f7"; ctx.font="700 20px Inter, Arial"; ctx.fillText(name, rX, pad+140);
@@ -502,13 +502,15 @@ document.getElementById('downloadShareBtn').addEventListener('click', ()=>{
 document.getElementById('shareXBtn').addEventListener('click', ()=>{
   const timeTxt = document.getElementById('time').textContent.trim();
   const txt = [
-    'PoKi Puzzle for @GoKiteAI',
+    'Seismic Puzzle for @SeismicSys',
     '',
-    `I just solved the PoKi Puzzle by @crpbase in ${timeTxt}!`,
+    `I just solved the Seismic Puzzle in ${timeTxt}!`,
     '',
-    'Try to beat my time: https://crpbase.github.io/PoKi-Puzzle/',
+    builded by @crpbase | art by @dosunets_
     '',
-    '#ChallengePoKiPuzzle'
+    'Try to beat my time: https://crpbase.github.io/Seismic_Puzzle/',
+    '',
+    '#ChallengeSeismicPuzzle'
   ].join('\n');
   const url='https://twitter.com/intent/tweet?text='+encodeURIComponent(txt);
   window.open(url,'_blank');
