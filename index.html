@@ -486,7 +486,7 @@ function generateShare() {
     ctx.restore(); 
 
     // 5. Малюємо весь текст (він буде малюватися вже без маски)
-    const rX = W - pad - rightW + 6;
+    const rX = imgBox.x + imgBox.w + pad;
     const name = (getName() || "guest");
 
     // Змінюємо кольори тексту на світліші для фіолетового фону
