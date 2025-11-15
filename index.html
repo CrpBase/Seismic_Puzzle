@@ -513,6 +513,25 @@ function generateShare(){
     ctx.fillStyle="#9fb2c3"; ctx.font="500 14px Inter, Arial"; ctx.fillText("Try to beat my time →", rX, H-pad-56);
     ctx.fillStyle="#E6533C"; ctx.font="700 18px Inter, Arial"; ctx.fillText("crpbase.github.io/Seismic_Puzzle", rX, H-pad-28);
 
+    // ... (всередині функції, що перевіряє перемогу)
+
+if (isGameWon) { // Це умовний приклад, у вас логіка може бути іншою
+  
+  // --- Вимикаємо музику ---
+  const music = document.getElementById('backgroundMusic');
+  if (!music.paused) {
+    music.pause(); // Ставимо на паузу
+    music.currentTime = 0; // Скидаємо час на початок
+  }
+  // --- Кінець коду для музики ---
+
+  // Показуємо вікно перемоги
+  document.getElementById('winOverlay').style.display='flex';
+  generateShare(); // Генеруємо фінальний екран
+}
+
+// ... (решта коду)
+
     document.getElementById('winOverlay').style.display='flex';
   }catch(e){ console.warn("generateShare error", e); }
 }
