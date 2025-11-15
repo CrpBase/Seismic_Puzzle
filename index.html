@@ -463,34 +463,51 @@ function generateShare(){
     roundRectPath(imgBox.x, imgBox.y, imgBox.w, imgBox.h, 14);
     // No fill - transparent background
     
-    // Clip to the rounded card so the image never shows background edges
-    roundRectPath(imgBox.x, imgBox.y, imgBox.w, imgBox.h, 14);
-    ctx.save();
-    ctx.clip();
+       // --- Початок блоку для заокруглення ---
 
-    // Draw the puzzle image with "cover" fit so it fully fills the box
+    // 1. Малюємо зображення пазла як і раніше
     if(img && img.complete){
       const iw = img.naturalWidth || img.width;
       const ih = img.naturalHeight || img.height;
-      const scale = Math.min(imgBox.w/iw, imgBox.h/ih);
+      // Використовуємо 'cover' fit, щоб зображення заповнило блок
+      const scale = Math.max(imgBox.w/iw, imgBox.h/ih);
       const dw = Math.ceil(iw * scale);
       const dh = Math.ceil(ih * scale);
       const dx = Math.floor(imgBox.x + (imgBox.w - dw)/2);
       const dy = Math.floor(imgBox.y + (imgBox.h - dh)/2);
       ctx.drawImage(img, dx, dy, dw, dh);
     } else {
-      // Fallback placeholder
+      // Залишаємо запасний варіант, якщо картинка не завантажилась
       ctx.fillStyle="#f2f2f2";
       ctx.fillRect(imgBox.x, imgBox.y, imgBox.w, imgBox.h);
-      ctx.strokeStyle="#e0e0e0";
-      for(let y=imgBox.y; y<imgBox.y+imgBox.h; y+=24){
-        ctx.beginPath(); ctx.moveTo(imgBox.x, y); ctx.lineTo(imgBox.x+imgBox.w, y); ctx.stroke();
-      }
-      for(let x=imgBox.x; x<imgBox.x+imgBox.w; x+=24){
-        ctx.beginPath(); ctx.moveTo(x, imgBox.y); ctx.lineTo(x, imgBox.y+imgBox.h); ctx.stroke();
-      }
     }
-    ctx.restore();
+
+    // 2. Створюємо "маску" поверх зображення
+    // Це по суті рамка, яка закриє гострі кути
+    ctx.fillStyle = "#381042"; // <-- ВАШ ФІОЛЕТОВИЙ КОЛІР ФОНУ
+    ctx.beginPath();
+    // Малюємо зовнішній прямокутник
+    ctx.moveTo(imgBox.x, imgBox.y);
+    ctx.lineTo(imgBox.x + imgBox.w, imgBox.y);
+    ctx.lineTo(imgBox.x + imgBox.w, imgBox.y + imgBox.h);
+    ctx.lineTo(imgBox.x, imgBox.y + imgBox.h);
+    ctx.closePath();
+    // Вирізаємо внутрішній прямокутник із заокругленими кутами
+    const r = 20; // Радіус заокруглення
+    ctx.moveTo(imgBox.x + r, imgBox.y);
+    ctx.quadraticCurveTo(imgBox.x, imgBox.y, imgBox.x, imgBox.y + r);
+    ctx.lineTo(imgBox.x, imgBox.y + imgBox.h - r);
+    ctx.quadraticCurveTo(imgBox.x, imgBox.y + imgBox.h, imgBox.x + r, imgBox.y + imgBox.h);
+    ctx.lineTo(imgBox.x + imgBox.w - r, imgBox.y + imgBox.h);
+    ctx.quadraticCurveTo(imgBox.x + imgBox.w, imgBox.y + imgBox.h, imgBox.x + imgBox.w, imgBox.y + imgBox.h - r);
+    ctx.lineTo(imgBox.x + imgBox.w, imgBox.y + r);
+    ctx.quadraticCurveTo(imgBox.x + imgBox.w, imgBox.y, imgBox.x + imgBox.w - r, imgBox.y);
+    ctx.closePath();
+    // Заливаємо отриману "рамку"
+    ctx.fill();
+
+    // --- Кінець блоку для заокруглення ---
+
 
     // Right panel text
     const rX = W - pad - rightW + 6;
