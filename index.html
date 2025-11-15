@@ -414,12 +414,19 @@ function generateShare(){
     sc.width=800; sc.height=420;
     const W=sc.width, H=sc.height, pad=20;
     
-    // Background
-    const bg = new Image();
+ // Background image fill
+const bg = new Image();
 bg.src = "background.png";
 
 bg.onload = () => {
     ctx.drawImage(bg, 0, 0, W, H);
+
+    // ⬇️ ВАЖЛИВО: тут ми запускаємо решту функції ⬇️
+    drawShareContent();
+};
+return; // щоб код нижче не виконався двічі
+
+function drawShareContent(){
 
     // Layout
     const rightW = 340;
