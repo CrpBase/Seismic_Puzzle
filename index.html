@@ -415,8 +415,11 @@ function generateShare(){
     const W=sc.width, H=sc.height, pad=20;
     
     // Background
-    ctx.fillStyle="#0b0f14";
-    ctx.fillRect(0,0,W,H);
+    const bg = new Image();
+bg.src = "background.png";
+
+bg.onload = () => {
+    ctx.drawImage(bg, 0, 0, W, H);
 
     // Layout
     const rightW = 340;
