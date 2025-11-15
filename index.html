@@ -497,7 +497,7 @@ function generateShare(){
 }
 document.getElementById('downloadShareBtn').addEventListener('click', ()=>{
   const sc=document.getElementById('shareCanvas'); const a=document.createElement('a');
-  a.href=sc.toDataURL('image/png'); a.download='poki-puzzle.png'; a.click();
+  a.href=sc.toDataURL('image/png'); a.download='seismic-puzzle.png'; a.click();
 });
 document.getElementById('shareXBtn').addEventListener('click', ()=>{
   const timeTxt = document.getElementById('time').textContent.trim();
@@ -510,7 +510,7 @@ document.getElementById('shareXBtn').addEventListener('click', ()=>{
     '',
     'Try to beat my time: https://crpbase.github.io/Seismic_Puzzle/',
     '',
-    '#ChallengePoKiPuzzle'
+    '#ChallengeSeismicPuzzle'
   ].join('\n');
   const url='https://twitter.com/intent/tweet?text='+encodeURIComponent(txt);
   window.open(url,'_blank');
