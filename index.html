@@ -373,7 +373,73 @@ let pieces=[]; const rand=(a,b)=>a+Math.random()*(b-a);
 function genEdges(){ const edges=Array.from({length:ROWS},()=>Array.from({length:COLS},()=>({top:0,right:0,bottom:0,left:0}))); for(let r=0;r<ROWS;r++){ for(let c=0;c<COLS;c++){ const e=edges[r][c]; if(r===0)e.top=0; else e.top=-edges[r-1][c].bottom; if(c===0)e.left=0; else e.left=-edges[r][c-1].right; if(c===COLS-1)e.right=0; else e.right=Math.random()<0.5?1:-1; if(r===ROWS-1)e.bottom=0; else e.bottom=Math.random()<0.5?1:-1; }} return edges; }
 function piecePath(ctx,w,h,tab,e){ const T=tab; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(w*0.33,0); if(e.top!==0){ const dir=e.top, cy=-T*dir; ctx.bezierCurveTo(w*0.38,0,w*0.38,cy,w*0.5,cy); ctx.bezierCurveTo(w*0.62,cy,w*0.62,0,w*0.67,0);} ctx.lineTo(w,0); ctx.lineTo(w,h*0.33); if(e.right!==0){ const dir=e.right, cx=w+T*dir; ctx.bezierCurveTo(w,h*0.38,cx,h*0.38,cx,h*0.5); ctx.bezierCurveTo(cx,h*0.62,w,h*0.62,w,h*0.67);} ctx.lineTo(w,h); ctx.lineTo(w*0.67,h); if(e.bottom!==0){ const dir=e.bottom, cy=h+T*dir; ctx.bezierCurveTo(w*0.62,h,w*0.62,cy,w*0.5,cy); ctx.bezierCurveTo(w*0.38,cy,w*0.38,h,w*0.33,h);} ctx.lineTo(0,h); ctx.lineTo(0,h*0.67); if(e.left!==0){ const dir=e.left, cx=-T*dir; ctx.bezierCurveTo(0,h*0.62,cx,h*0.62,cx,h*0.5); ctx.bezierCurveTo(cx,h*0.38,0,h*0.38,0,h*0.33);} ctx.closePath(); }
 function spawnOutsideCenter(bw,bh){ const M=8,GAP=6; let tries=0; while(tries<2000){ const x=Math.round(rand(M,CANVAS.width-bw-M)); const y=Math.round(rand(M,CANVAS.height-bh-M)); const inX = x < (board.x+board.w+GAP) && (x+bw) > (board.x-GAP); const inY = y < (board.y+board.h+GAP) && (y+bh) > (board.y-GAP); if(!(inX&&inY)) return {x,y}; tries++; } return {x:M,y:M}; }
-function buildPieces(){ pieces.length=0; resizeBoardToImage(); const tab=Math.min(tileW,tileH)*0.28; const edges=genEdges(); for(let r=0;r<ROWS;r++){ for(let c=0;c<COLS;c++){ const bw=Math.ceil(tileW+tab*2), bh=Math.ceil(tileH+tab*2); const off=document.createElement('canvas'); off.width=bw; off.height=bh; const octx=off.getContext('2d'); octx.save(); octx.translate(tab,tab); piecePath(octx,tileW,tileH,tab,edges[r][c]); octx.shadowColor='rgba(0,0,0,0.12)'; octx.shadowBlur=8; octx.shadowOffsetY=2; octx.clip(); const destX=-c*tileW-tab, destY=-r*tileH-tab; octx.drawImage(img,0,0,img.naturalWidth||900,img.naturalHeight||560,destX,destY,board.w+tab*2,board.h+tab*2); octx.restore(); octx.translate(tab,tab); octx.lineWidth=1; octx.strokeStyle='rgba(0,0,0,0.35)'; piecePath(octx,tileW,tileH,tab,edges[r][c]); octx.stroke(); const tx=Math.round(board.x + c*tileW - tab), ty=Math.round(board.y + r*tileH - tab); const spawn=spawnOutsideCenter(bw,bh); const p={r,c,tx,ty,x:spawn.x,y:spawn.y,bw,bh,bmp:off,group:null}; makeGroup(p); pieces.push(p); }} }
+function buildPieces() {
+    pieces.length = 0;
+    resizeBoardToImage();
+    const tab = Math.min(tileW, tileH) * 0.28;
+    const edges = genEdges();
+
+    const source_piece_w = img.naturalWidth / COLS;
+    const source_piece_h = img.naturalHeight / ROWS;
+
+    for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+            const bw = Math.ceil(tileW + tab * 2);
+            const bh = Math.ceil(tileH + tab * 2);
+
+            const off = document.createElement('canvas');
+            off.width = bw;
+            off.height = bh;
+            const octx = off.getContext('2d');
+            octx.save();
+
+            octx.translate(tab, tab);
+            piecePath(octx, tileW, tileH, tab, edges[r][c]);
+
+            octx.shadowColor = 'rgba(0,0,0,0.12)';
+            octx.shadowBlur = 8;
+            octx.shadowOffsetY = 2;
+            octx.clip();
+
+            octx.drawImage(
+                img,
+                c * source_piece_w,
+                r * source_piece_h,
+                source_piece_w,
+                source_piece_h,
+                0,
+                0,
+                tileW,
+                tileH
+            );
+
+            octx.restore();
+
+            octx.translate(tab, tab);
+            octx.lineWidth = 1;
+            octx.strokeStyle = 'rgba(0,0,0,0.35)';
+            piecePath(octx, tileW, tileH, tab, edges[r][c]);
+            octx.stroke();
+
+            const tx = Math.round(board.x + c * tileW - tab);
+            const ty = Math.round(board.y + r * tileH - tab);
+            const spawn = spawnOutsideCenter(bw, bh);
+            const p = {
+                r,
+                c,
+                tx,
+                ty,
+                x: spawn.x,
+                y: spawn.y,
+                bw,
+                bh,
+                bmp: off,
+                group: null
+            };
+            makeGroup(p);
+            pieces.push(p);
+        }
+    }
 function draw(ghost=false){ CTX.clearRect(0,0,CANVAS.width,CANVAS.height); if(ghost&&hasImage){ CTX.globalAlpha=.18; CTX.drawImage(img,0,0,img.naturalWidth||900,img.naturalHeight||560,board.x,board.y,board.w,board.h); CTX.globalAlpha=1; } for(let i=0;i<pieces.length;i++){ const p=pieces[i]; if(p===draggingPiece) continue; CTX.drawImage(p.bmp,p.x,p.y);} if(draggingPiece){ CTX.drawImage(draggingPiece.bmp,draggingPiece.x,draggingPiece.y);} }
 function hitPiece(p,x,y){ return x>=p.x && y>=p.y && x<=p.x+p.bw && y<=p.y+p.bh; }
 function pieceAt(r,c){ if(r<0||c<0||r>=ROWS||c>=COLS)return null; for(const p of pieces){ if(p.r===r && p.c===c) return p; } return null; }
