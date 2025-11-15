@@ -336,7 +336,7 @@ const dobby=new Image(); let dobbyLoaded=false; dobby.src=DOBBY_URL; dobby.onloa
 
 let board={x:60,y:40,w:CANVAS.width-120,h:CANVAS.height-100}; let tileW=0,tileH=0;
 function resizeBoardToImage(){
-  const cw=CANVAS.width-120, ch=CANVAS.height-100;
+  const cw=CANVAS.width-120, ch=CANVAS.height-120;
   const naturalW=img.naturalWidth||900, naturalH=img.naturalHeight||560, aspect=naturalW/naturalH;
   let w=cw, h=Math.round(cw/aspect); if(h>ch){ h=ch; w=Math.round(h*aspect); }
   board={ x:Math.round((CANVAS.width-w)/2), y:Math.round((CANVAS.height-h)/2), w, h };
