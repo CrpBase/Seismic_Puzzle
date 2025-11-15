@@ -2,6 +2,26 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <style>
+  :root {
+    --accent: #b248a4 !important; /* Яскравий фіолетовий */
+    --accent-dark: #370f43 !important; /* Темніший фіолетовий */
+  }
+
+  .btn.primary {
+    /* Додаємо фон з градієнтом і !important */
+    background: linear-gradient(to bottom, var(--accent), var(--accent-dark)) !important;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.05) inset, 0 10px 24px rgba(160, 32, 240, 0.25) !important;
+    /* Також варто вказати колір тексту, якщо він не контрастний */
+    color: white !important;
+  }
+
+  .btn.primary:hover {
+     /* Трохи змінюємо фон при наведенні */
+    background: linear-gradient(to bottom, #370f43, var(--accent-dark)) !important;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.05) inset, 0 14px 34px rgba(160, 32, 240, 0.35) !important;
+  }
+</style>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
   <title>Seismic Puzzle</title>
