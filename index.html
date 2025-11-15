@@ -463,45 +463,34 @@ function generateShare(){
     roundRectPath(imgBox.x, imgBox.y, imgBox.w, imgBox.h, 14);
     // No fill - transparent background
     
-          // --- Початок блоку для заміни ---
+         // Clip to the rounded card so the image never shows background edges
+    roundRectPath(imgBox.x, imgBox.y, imgBox.w, imgBox.h, 14);
+    ctx.save();
+    ctx.clip();
 
-    // Малюємо зображення пазла із заокругленими кутами, використовуючи спеціальний режим накладання
-    if (img && img.complete) {
-      ctx.save(); // Зберігаємо стан канвасу
-
-      // 1. Спочатку створюємо заокруглену форму. Вона буде нашою "маскою".
-      // Використовуємо вашу існуючу функцію roundRectPath.
-      // Я збільшив радіус до 20, щоб заокруглення було більш помітним.
-      roundRectPath(imgBox.x, imgBox.y, imgBox.w, imgBox.h, 20);
-      
-      // 2. Встановлюємо режим 'source-in'. Це означає, що наступний об'єкт
-      // (наша картинка) намалюється тільки там, де він перетинається з фігурою,
-      // яку ми створили вище.
-      ctx.globalCompositeOperation = 'source-in';
-
-      // 3. Тепер малюємо саму картинку. Вона автоматично "впишеться" у заокруглену форму.
-      const iw = img.naturalWidth || img.width;
-      const ih = img.naturalHeight || img.height;
-      // Логіка для заповнення всієї області ('cover' fit)
-      const scale = Math.max(imgBox.w / iw, imgBox.h / ih);
-      const dw = iw * scale;
-      const dh = ih * scale;
-      const dx = imgBox.x + (imgBox.w - dw) / 2;
-      const dy = imgBox.y + (imgBox.h - dh) / 2;
+    // Draw the puzzle image with "cover" fit so it fully fills the box
+    if(img && img.complete){
+      const iw = img.naturalWidth  img.width;
+      const ih = img.naturalHeight  img.height;
+      const scale = Math.min(imgBox.w/iw, imgBox.h/ih);
+      const dw = Math.ceil(iw * scale);
+      const dh = Math.ceil(ih * scale);
+      const dx = Math.floor(imgBox.x + (imgBox.w - dw)/2);
+      const dy = Math.floor(imgBox.y + (imgBox.h - dh)/2);
       ctx.drawImage(img, dx, dy, dw, dh);
-      
-      // 4. Повертаємо налаштування канвасу до стандартних
-      ctx.restore();
     } else {
-      // Запасний варіант, якщо картинка не завантажилась (теж робимо заокругленим)
-      roundRectPath(imgBox.x, imgBox.y, imgBox.w, imgBox.h, 20);
-      ctx.fillStyle = "#f2f2f2";
-      ctx.fill();
+      // Fallback placeholder
+      ctx.fillStyle="#f2f2f2";
+      ctx.fillRect(imgBox.x, imgBox.y, imgBox.w, imgBox.h);
+      ctx.strokeStyle="#e0e0e0";
+      for(let y=imgBox.y; y<imgBox.y+imgBox.h; y+=24){
+        ctx.beginPath(); ctx.moveTo(imgBox.x, y); ctx.lineTo(imgBox.x+imgBox.w, y); ctx.stroke();
+      }
+      for(let x=imgBox.x; x<imgBox.x+imgBox.w; x+=24){
+        ctx.beginPath(); ctx.moveTo(x, imgBox.y); ctx.lineTo(x, imgBox.y+imgBox.h); ctx.stroke();
+      }
     }
-
-    // --- Кінець блоку для заміни ---
-
-
+    ctx.restore();
 
     // Right panel text
     const rX = W - pad - rightW + 6;
