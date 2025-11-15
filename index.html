@@ -620,8 +620,16 @@ menuOverlay.addEventListener('mouseleave', ()=>{ mouse.x=-9999; mouse.y=-9999; }
       }, delay||60);
     }
     if(startBtn && shuffleBtn){
-      startBtn.addEventListener('click', ()=> autoShuffleSoon(80), true);
+  startBtn.addEventListener('click', () => {
+    // Вмикаємо музику
+    const music = document.getElementById('backgroundMusic');
+    if (music.paused) {
+      music.play();
     }
+    // Запускаємо гру
+    autoShuffleSoon(80);
+  }, true);
+}
     if(resetBtn && shuffleBtn){
       resetBtn.addEventListener('click', ()=> autoShuffleSoon(40), true);
     }
