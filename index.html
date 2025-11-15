@@ -426,85 +426,109 @@ bg.onload = () => {
 };
 return; // щоб код нижче не виконався двічі
 
-function drawShareContent(){
+function generateShare(){
+  try{
+    const sc=document.getElementById('shareCanvas');
+    const ctx=sc.getContext('2d');
+    sc.width=800; 
+    sc.height=420;
 
-    // Layout
-    const rightW = 340;
-    const imgBox = { x: pad, y: pad, w: W - rightW - 2*pad, h: H - 2*pad };
+    const W=sc.width, H=sc.height, pad=20;
 
-    // Helper to draw rounded rectangle
-    function roundRectPath(x,y,w,h,r=12){
-      ctx.beginPath();
-      ctx.moveTo(x+r, y);
-      ctx.lineTo(x+w-r, y);
-      ctx.quadraticCurveTo(x+w, y, x+w, y+r);
-      ctx.lineTo(x+w, y+h-r);
-      ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-      ctx.lineTo(x+r, y+h);
-      ctx.quadraticCurveTo(x, y+h, x, y+h-r);
-      ctx.lineTo(x, y+r);
-      ctx.quadraticCurveTo(x, y, x+r, y);
-      ctx.closePath();
+    // === Custom background image ===
+    const bg = new Image();
+    bg.src = "background.png";
+
+    bg.onload = () => {
+      ctx.drawImage(bg, 0, 0, W, H);
+
+      // Draw rest of share card AFTER background
+      drawShareContent();
+    };
+
+    return; // prevent double execution
+
+    // === Everything below stays unchanged ===
+    function drawShareContent(){
+      const rightW = 340;
+      const imgBox = { x: pad, y: pad, w: W - rightW - 2*pad, h: H - 2*pad };
+
+      function roundRectPath(x,y,w,h,r=12){
+        ctx.beginPath();
+        ctx.moveTo(x+r,y);
+        ctx.lineTo(x+w-r,y);
+        ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+        ctx.lineTo(x+w,y+h-r);
+        ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+        ctx.lineTo(x+r,y+h);
+        ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+        ctx.lineTo(x,y+r);
+        ctx.quadraticCurveTo(x,y,x+r,y);
+        ctx.closePath();
+      }
+
+      // Clip card
+      roundRectPath(imgBox.x,imgBox.y,imgBox.w,imgBox.h,14);
+      ctx.save();
+      ctx.clip();
+
+      if(img && img.complete){
+        const iw=img.naturalWidth||img.width;
+        const ih=img.naturalHeight||img.height;
+        const scale=Math.min(imgBox.w/iw,imgBox.h/ih);
+        const dw=Math.ceil(iw*scale);
+        const dh=Math.ceil(ih*scale);
+        const dx=Math.floor(imgBox.x+(imgBox.w-dw)/2);
+        const dy=Math.floor(imgBox.y+(imgBox.h-dh)/2);
+        ctx.drawImage(img,dx,dy,dw,dh);
+      }
+      ctx.restore();
+
+      // Right side text
+      const rX=W-pad-rightW+6;
+      const name=(getName()||"guest");
+
+      ctx.fillStyle="#e8f0f7";
+      ctx.font="700 28px Inter"; 
+      ctx.fillText("Seismic Puzzle", rX, pad+30);
+
+      ctx.fillStyle="#9fb2c3";
+      ctx.font="800 18px Inter";
+      ctx.fillText("for @seismicsys", rX, pad+58);
+
+      ctx.fillStyle="#9fb2c3"; 
+      ctx.font="600 14px Inter"; 
+      ctx.fillText("Player", rX, pad+118);
+
+      ctx.fillStyle="#e8f0f7"; 
+      ctx.font="700 20px Inter"; 
+      ctx.fillText(name, rX, pad+140);
+
+      ctx.fillStyle="#9fb2c3"; 
+      ctx.fillText("Time", rX, pad+176);
+
+      ctx.fillStyle="#e8f0f7"; 
+      ctx.fillText(timeEl.textContent.trim(), rX, pad+198);
+
+      ctx.fillStyle="#9fb2c3"; 
+      ctx.fillText("Moves", rX, pad+234);
+
+      ctx.fillStyle="#e8f0f7"; 
+      ctx.fillText(moves.toString(), rX, pad+256);
+
+      ctx.fillStyle="#9fb2c3"; 
+      ctx.fillText("Try to beat my time →", rX, H-pad-56);
+
+      ctx.fillStyle="#E6533C"; 
+      ctx.font="700 18px Inter"; 
+      ctx.fillText("crpbase.github.io/Seismic_Puzzle", rX, H-pad-28);
+
+      document.getElementById('winOverlay').style.display='flex';
     }
 
-    // White card under the image
-    roundRectPath(imgBox.x, imgBox.y, imgBox.w, imgBox.h, 14);
-    // No fill - transparent background
-    
-    // Clip to the rounded card so the image never shows background edges
-    roundRectPath(imgBox.x, imgBox.y, imgBox.w, imgBox.h, 14);
-    ctx.save();
-    ctx.clip();
-
-    // Draw the puzzle image with "cover" fit so it fully fills the box
-    if(img && img.complete){
-      const iw = img.naturalWidth || img.width;
-      const ih = img.naturalHeight || img.height;
-      const scale = Math.min(imgBox.w/iw, imgBox.h/ih);
-      const dw = Math.ceil(iw * scale);
-      const dh = Math.ceil(ih * scale);
-      const dx = Math.floor(imgBox.x + (imgBox.w - dw)/2);
-      const dy = Math.floor(imgBox.y + (imgBox.h - dh)/2);
-      ctx.drawImage(img, dx, dy, dw, dh);
-    } else {
-      // Fallback placeholder
-      ctx.fillStyle="#f2f2f2";
-      ctx.fillRect(imgBox.x, imgBox.y, imgBox.w, imgBox.h);
-      ctx.strokeStyle="#e0e0e0";
-      for(let y=imgBox.y; y<imgBox.y+imgBox.h; y+=24){
-        ctx.beginPath(); ctx.moveTo(imgBox.x, y); ctx.lineTo(imgBox.x+imgBox.w, y); ctx.stroke();
-      }
-      for(let x=imgBox.x; x<imgBox.x+imgBox.w; x+=24){
-        ctx.beginPath(); ctx.moveTo(x, imgBox.y); ctx.lineTo(x, imgBox.y+imgBox.h); ctx.stroke();
-      }
-    }
-    ctx.restore();
-
-    // Right panel text
-    const rX = W - pad - rightW + 6;
-    const name=(getName()||"guest");
-
-    ctx.fillStyle="#0b0f14"; // subtle shadow effect for legibility
-    ctx.font="700 28px Inter, Arial"; ctx.fillText("Seismic Puzzle", rX+1, pad+31);
-    ctx.fillStyle="#e8f0f7"; ctx.fillText("Seismic Puzzle", rX, pad+30);
-
-    ctx.fillStyle="#e8f0f7"; ctx.font="800 18px Inter, Arial"; ctx.fillText("for @seismicsys", rX, pad+58);
-
-    ctx.fillStyle="#9fb2c3"; ctx.font="600 14px Inter, Arial"; ctx.fillText("Player", rX, pad+118);
-    ctx.fillStyle="#e8f0f7"; ctx.font="700 20px Inter, Arial"; ctx.fillText(name, rX, pad+140);
-
-    ctx.fillStyle="#9fb2c3"; ctx.font="600 14px Inter, Arial"; ctx.fillText("Time", rX, pad+176);
-    ctx.fillStyle="#e8f0f7"; ctx.font="700 20px Inter, Arial"; ctx.fillText(timeEl.textContent.trim(), rX, pad+198);
-
-    ctx.fillStyle="#9fb2c3"; ctx.font="600 14px Inter, Arial"; ctx.fillText("Moves", rX, pad+234);
-    ctx.fillStyle="#e8f0f7"; ctx.font="700 20px Inter, Arial"; ctx.fillText(moves.toString(), rX, pad+256);
-
-    ctx.fillStyle="#9fb2c3"; ctx.font="500 14px Inter, Arial"; ctx.fillText("Try to beat my time →", rX, H-pad-56);
-    ctx.fillStyle="#E6533C"; ctx.font="700 18px Inter, Arial"; ctx.fillText("crpbase.github.io/Seismic_Puzzle", rX, H-pad-28);
-
-    document.getElementById('winOverlay').style.display='flex';
   }catch(e){ console.warn("generateShare error", e); }
 }
+
 document.getElementById('downloadShareBtn').addEventListener('click', ()=>{
   const sc=document.getElementById('shareCanvas'); const a=document.createElement('a');
   a.href=sc.toDataURL('image/png'); a.download='seismic-puzzle.png'; a.click();
