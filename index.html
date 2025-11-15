@@ -469,8 +469,8 @@ function generateShare(){
 
     // Draw the puzzle image with "cover" fit so it fully fills the box
     if(img && img.complete){
-      const iw = img.naturalWidth || img.width;
-      const ih = img.naturalHeight || img.height;
+  const iw = img.naturalWidth || img.width;
+  const ih = img.naturalHeight || img.height;
       const scale = Math.min(imgBox.w/iw, imgBox.h/ih);
       const dw = Math.ceil(iw * scale);
       const dh = Math.ceil(ih * scale);
