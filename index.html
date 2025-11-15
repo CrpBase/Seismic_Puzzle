@@ -460,11 +460,11 @@ function generateShare(){
     }
 
     // White card under the image
-    roundRectPath(imgBox.x, imgBox.y, imgBox.w, imgBox.h, 14);
+    roundRectPath(imgBox.x, imgBox.y, imgBox.w, imgBox.h, 30);
     // No fill - transparent background
     
     // Clip to the rounded card so the image never shows background edges
-    roundRectPath(imgBox.x, imgBox.y, imgBox.w, imgBox.h, 14);
+    roundRectPath(imgBox.x, imgBox.y, imgBox.w, imgBox.h, 30);
     ctx.save();
     ctx.clip();
 
