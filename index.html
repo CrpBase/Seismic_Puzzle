@@ -617,6 +617,36 @@ menuOverlay.addEventListener('mouseleave', ()=>{ mouse.x=-9999; mouse.y=-9999; }
         if(shuffleBtn) shuffleBtn.click();
       }, delay||60);
     }
+    // --- ВСТАВТЕ КОД ДЛЯ КНОПОК СЮДИ ---
+document.getElementById('downloadShareBtn').addEventListener('click', () => {
+  const sc = document.getElementById('shareCanvas');
+  const a = document.createElement('a');
+  a.href = sc.toDataURL('image/png');
+  a.download = 'seismic-puzzle.png';
+  a.click();
+});
+
+document.getElementById('shareXBtn').addEventListener('click', () => {
+  const timeTxt = document.getElementById('time').textContent.trim();
+  const txt = [
+    'Seismic Puzzle for @seismicsys',
+    '',
+    `I just solved the Seismic Puzzle in ${timeTxt}!`,
+    '',
+    `build by @crpbase | art by @dosunets`,
+    '',
+    'Try to beat my time: https://crpbase.github.io/Seismic_Puzzle/',
+    '',
+    '#ChallengeSeismicPuzzle'
+  ].join('\n');
+  const url = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(txt);
+  window.open(url, '_blank');
+});
+
+document.getElementById('okBtn').addEventListener('click', () => {
+    document.getElementById('winOverlay').style.display = 'none';
+});
+// --- КІНЕЦЬ БЛОКУ ДЛЯ КНОПОК ---
     if(startBtn && shuffleBtn){
       startBtn.addEventListener('click', ()=> autoShuffleSoon(80), true);
     }
