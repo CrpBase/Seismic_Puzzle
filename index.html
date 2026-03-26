@@ -943,8 +943,8 @@ const hofListEl=document.getElementById("hofList");
 const closeHofBtn=document.getElementById("closeHofBtn");
 const refreshHofBtn=document.getElementById("refreshHofBtn");
 
-const cardRed=new Image();  cardRed.src="прибери_player_nickname_202603261159.png";
-const cardBlue=new Image(); cardBlue.src="прибери_player_nickname_202603261153.png";
+const cardRed=new Image();  cardRed.src="card_red.png";
+const cardBlue=new Image(); cardBlue.src="card_blue.png";
 function imgReady(im){return new Promise(r=>{if(im.complete&&im.naturalWidth)r();else{im.onload=r;im.onerror=r;}});}
 
 function drawHofCard(canvas,cardImg,name,timeMs,movesVal,accentColor){
